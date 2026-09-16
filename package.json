@@ -1,0 +1,17 @@
+{
+  "name": "railnex",
+  "version": "1.0.0",
+  "description": "RAILNEX - Indian Railways AI Dynamic Block Planning & Scheduling Platform",
+  "main": "index.html",
+  "scripts": {
+    "start": "echo 'Static frontend with Vercel serverless API ready'"
+  },
+  "keywords": [
+    "railways",
+    "block-planning",
+    "ai",
+    "sih2026"
+  ],
+  "author": "CODELIKE_67",
+  "license": "MIT"
+}
