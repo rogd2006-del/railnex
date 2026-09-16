@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RAILNEX - AI-Powered Automatic Block Planning to Maximize Asset Availability for Train Operations on Indian Railways. Smart India Hackathon 2026 SIH26027.">
+  <title>RAILNEX | AI-Powered Automatic Block Planning | Indian Railways</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Application Header -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="railway-crest" title="Indian Railways / RAILNEX">
+        🚆
+      </div>
+      <div class="brand-title-group">
+        <h1>
+          RAILNEX
+        </h1>
+        <div class="brand-subtitle">
+          <span>Indian Railways AI-Powered Dynamic Block Planning Platform</span>
+          <span>•</span>
+          <span>Corridor: NDLS - GZB - CNB (435 KM)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <div class="live-clock-box">
+        <div class="live-indicator"></div>
+        <span id="live-time-display">02:30:00 IST</span>
+      </div>
+
+      <div class="role-switcher">
+        <label for="role-select">OPERATOR ROLE:</label>
+        <select id="role-select">
+          <option value="CONTROLLER">Section Controller (Live Ops)</option>
+          <option value="DRM">Divisional Railway Manager (DRM / Sr.DOM)</option>
+          <option value="ENGINEER">Maintenance Engineer (TMS/TRD/S&T)</option>
+        </select>
+      </div>
+
+      <button id="btn-open-gemini" class="btn-gemini">
+        <span>✨</span> Gemini AI Copilot
+      </button>
+
+      <button id="btn-submit-request-open" class="btn-primary" style="padding: 6px 14px; font-size: 12px;">
+        <span>➕</span> New Block Request
+      </button>
+    </div>
+  </header>
+
+  <!-- Navigation Bar & System Feeds -->
+  <nav class="app-nav">
+    <div class="nav-tabs">
+      <button id="nav-btn-corridor" class="nav-tab-btn active" data-tab="tab-corridor">
+        <span>📡</span> Live Corridor & Operations
+      </button>
+      <button id="nav-btn-optimizer" class="nav-tab-btn" data-tab="tab-optimizer">
+        <span>⚡</span> AI Block Optimizer
+        <span id="badge-pending-reqs" class="badge-counter">5 Demands</span>
+      </button>
+      <button id="nav-btn-simulation" class="nav-tab-btn" data-tab="tab-simulation">
+        <span>🧪</span> What-If Simulation Sandbox
+      </button>
+      <button id="nav-btn-approvals" class="nav-tab-btn" data-tab="tab-approvals">
+        <span>🛡️</span> Controller Approval Flow
+        <span id="badge-pending-approvals" class="badge-counter" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border-color: rgba(239, 68, 68, 0.4);">2 Pending</span>
+      </button>
+      <button id="nav-btn-rolling" class="nav-tab-btn" data-tab="tab-rolling">
+        <span>📅</span> 26-Week Rolling Block Plan
+      </button>
+    </div>
+
+    <div class="data-feed-pills">
+      <div class="feed-pill connected" title="Google Gemini 1.5 Flash AI Engine Active">
+        <span class="dot" style="background: #c084fc; box-shadow: 0 0 6px #c084fc;"></span> Gemini AI Live
+      </div>
+      <div class="feed-pill connected" title="Control Office Application">
+        <span class="dot"></span> COA Live
+      </div>
+      <div class="feed-pill connected" title="National Train Enquiry System">
+        <span class="dot"></span> NTES Active
+      </div>
+      <div class="feed-pill connected" title="Freight Operations Information System">
+        <span class="dot"></span> FOIS Synced
+      </div>
+      <div class="feed-pill connected" title="India Meteorological Department Weather API">
+        <span class="dot"></span> IMD 26°C Clear
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Application Container -->
+  <main class="main-container">
+
+    <!-- Top KPI Grid -->
+    <section class="kpi-grid">
+      <div class="kpi-card" style="--accent-bar: #10b981;">
+        <div class="kpi-label">
+          <span>Asset Availability Rate</span>
+          <span>📈 +3.4%</span>
+        </div>
+        <div class="kpi-value" id="kpi-asset-availability">96.8%</div>
+        <div class="kpi-subtext text-positive">
+          <span>● Target: &gt;95.0% (Rolling Plan compliant)</span>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--accent-bar: #38bdf8;">
+        <div class="kpi-label">
+          <span>Co-Allocation Ratio (Shadow Windows)</span>
+          <span>🔗 High</span>
+        </div>
+        <div class="kpi-value" id="kpi-coallocation">38.4%</div>
+        <div class="kpi-subtext text-positive">
+          <span>● 3 Multi-dept bundled blocks</span>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--accent-bar: #8b5cf6;">
+        <div class="kpi-label">
+          <span>Punctuality Retention Index</span>
+          <span>⏱️ Safe</span>
+        </div>
+        <div class="kpi-value" id="kpi-punctuality">98.2%</div>
+        <div class="kpi-subtext text-positive">
+          <span>● Only minor freight loops regulated</span>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--accent-bar: #f59e0b;">
+        <div class="kpi-label">
+          <span>Cumulative Line Hours Saved</span>
+          <span>⚡ AI Gain</span>
+        </div>
+        <div class="kpi-value" id="kpi-hours-saved">142 <span>hrs</span></div>
+        <div class="kpi-subtext text-positive">
+          <span>● Reduced downtime via simultaneous execution</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: LIVE CORRIDOR SCHEMATIC & TRAFFIC -->
+    <section id="tab-corridor" class="tab-content active">
+      <div class="corridor-header">
+        <div>
+          <h2 style="font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+            <span>📍</span> High-Density Quad-Track Corridor Schematic Diagram
+          </h2>
+          <p style="font-size: 12px; color: var(--text-muted);">
+            Real-time visualizer of Northern & North Central Railway Golden Corridor (NDLS - GZB - KRJ - ALJN - TDL - CNB) with active trains & maintenance shadows.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button id="btn-toggle-train-sim" class="btn-outline">
+            <span id="train-sim-state-icon">⏸️</span> Pause Corridor Feed
+          </button>
+          <button id="btn-refresh-corridor" class="btn-outline">
+            <span>🔄</span> Sync TMS/COA
+          </button>
+        </div>
+      </div>
+
+      <!-- Schematic Track Diagram Box -->
+      <div class="corridor-schematic-box">
+        <div class="schematic-legend">
+          <div class="legend-item">
+            <div class="legend-swatch" style="background: #3b82f6;"></div>
+            <span>Vande Bharat Express</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background: #dc2626;"></div>
+            <span>Rajdhani Express</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background: #0284c7;"></div>
+            <span>Shatabdi Express</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background: #64748b;"></div>
+            <span>Freight / Container Rake</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background: repeating-linear-gradient(45deg, #f59e0b, #f59e0b 4px, #a855f7 4px, #a855f7 8px);"></div>
+            <span>Multi-Department Block (Track + OHE + S&T)</span>
+          </div>
+        </div>
+
+        <div class="rail-corridor-track-container" id="rail-corridor-canvas">
+          <!-- Station Markers Row -->
+          <div class="stations-axis" id="stations-axis-container">
+            <!-- Injected via JavaScript -->
+          </div>
+
+          <!-- UP Main Track Line -->
+          <div class="track-line-wrapper">
+            <div class="track-line-label">UP MAIN LINE</div>
+            <div class="track-rail-line up-line" id="track-up-main">
+              <!-- Animated Trains and Block overlays injected dynamically -->
+            </div>
+          </div>
+
+          <!-- DOWN Main Track Line -->
+          <div class="track-line-wrapper">
+            <div class="track-line-label">DN MAIN LINE</div>
+            <div class="track-rail-line down-line" id="track-dn-main">
+              <!-- Animated Trains and Block overlays injected dynamically -->
+            </div>
+          </div>
+
+          <!-- Loop Line -->
+          <div class="track-line-wrapper">
+            <div class="track-line-label">LOOP / SIDING</div>
+            <div class="track-rail-line" style="border: 1px dashed #475569;" id="track-loop-main">
+              <!-- Loop line trains -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Operations Split Panels: Trains vs Active Blocks -->
+      <div class="operations-split-grid">
+        <!-- Live Trains Panel -->
+        <div class="panel-box">
+          <div class="panel-title-bar">
+            <h3><span>🚆</span> Active Trains on Corridor (COA Feed)</h3>
+            <span class="badge-counter" id="train-count-badge">6 Active</span>
+          </div>
+          <div class="live-items-list" id="active-trains-list">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Active Maintenance Blocks Panel -->
+        <div class="panel-box">
+          <div class="panel-title-bar">
+            <h3><span>🚧</span> Active / Committed Maintenance Blocks</h3>
+            <span class="badge-counter" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border-color: rgba(168, 85, 247, 0.4);" id="active-blocks-badge">1 Active</span>
+          </div>
+          <div class="live-items-list" id="active-blocks-list">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: AI BLOCK OPTIMIZER (OR-Tools Fusion & Shadow Windows) -->
+    <section id="tab-optimizer" class="tab-content">
+      <div class="ai-optimizer-banner">
+        <div class="ai-engine-status">
+          <div class="ai-core-icon">🧠</div>
+          <div>
+            <h2 style="font-size: 1.2rem; font-weight: 800;">RAILNEX Dynamic AI Block Optimizer</h2>
+            <p style="font-size: 12px; color: #cbd5e1; max-width: 600px;">
+              Powered by Constraint Optimization (Google OR-Tools heuristic) & Conflict Prediction. Fuses independent requests from <strong>TMS (Civil Track)</strong>, <strong>TDMS (TRD / OHE)</strong>, and <strong>SMMS (S&T Signal)</strong> into optimal shadow windows.
+            </p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <button id="btn-run-optimizer" class="btn-primary" style="font-size: 14px; padding: 12px 24px;">
+            <span>⚡ Run AI Optimization Engine</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Multi-Department Demands Pending Fusion -->
+      <div class="panel-box" style="margin-bottom: 24px;">
+        <div class="panel-title-bar">
+          <h3>
+            <span>📋</span> Independent Maintenance Demands Ingested (TMS / SMMS / TDMS)
+          </h3>
+          <span style="font-size: 12px; color: var(--text-muted);">Awaiting Automatic Synergistic Bundling</span>
+        </div>
+        <div class="live-items-list" id="pending-demands-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- AI Recommended Fusion & Shadow Window Plans -->
+      <div class="panel-box">
+        <div class="panel-title-bar">
+          <h3>
+            <span>✨</span> AI-Recommended Optimized Shadow Window Bundles
+          </h3>
+          <span class="status-badge on-time">OR-Tools Solved (0.04s)</span>
+        </div>
+
+        <div id="ai-fusion-results-container">
+          <!-- Populated dynamically with Explainable AI Cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: WHAT-IF SIMULATION SANDBOX -->
+    <section id="tab-simulation" class="tab-content">
+      <div style="margin-bottom: 20px;">
+        <h2 style="font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <span>🧪</span> Controller What-If Simulation Sandbox
+        </h2>
+        <p style="font-size: 12px; color: var(--text-muted);">
+          Simulate real-time operational contingencies (train delays, emergency block duration expansion, adverse weather) to test cascading knock-on effects before dispatching.
+        </p>
+      </div>
+
+      <div class="simulation-sandbox-grid">
+        <!-- Interactive Controls -->
+        <div class="sim-controls-panel">
+          <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px;">
+            Simulation Parameters
+          </h3>
+
+          <div class="sim-slider-group">
+            <div class="sim-slider-label">
+              <span>Primary Train Delayed</span>
+              <span id="sim-train-selected">12424 Rajdhani Exp</span>
+            </div>
+            <select id="sim-train-select" class="form-select" style="margin-bottom: 12px;">
+              <option value="TRN-12424">12424 Rajdhani Express (DN)</option>
+              <option value="TRN-22436">22436 Vande Bharat Express (DN)</option>
+              <option value="TRN-12004">12004 Shatabdi Express (UP)</option>
+              <option value="TRN-BCN402">BCN/4021A Freight Container (UP)</option>
+            </select>
+            <div class="sim-slider-label">
+              <span>Induced Delay:</span>
+              <span id="sim-delay-value">25 mins</span>
+            </div>
+            <input type="range" id="sim-delay-slider" class="sim-slider" min="0" max="90" value="25" step="5">
+          </div>
+
+          <div class="sim-slider-group">
+            <div class="sim-slider-label">
+              <span>Block Window Duration</span>
+              <span id="sim-block-duration-value">180 mins</span>
+            </div>
+            <input type="range" id="sim-block-duration-slider" class="sim-slider" min="60" max="360" value="180" step="15">
+          </div>
+
+          <div class="sim-slider-group">
+            <div class="sim-slider-label">
+              <span>Simulated Weather / Visibility</span>
+              <span id="sim-weather-value">Normal</span>
+            </div>
+            <select id="sim-weather-select" class="form-select">
+              <option value="CLEAR">Clear Weather (Full Speed 130 km/h)</option>
+              <option value="FOG">Dense Winter Fog (PSR 60 km/h)</option>
+              <option value="HEAVY_RAIN">Heavy Monsoon Rain (Waterlogging risk)</option>
+            </select>
+          </div>
+
+          <button id="btn-recalculate-sim" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">
+            <span>⚡ Re-Run Simulation</span>
+          </button>
+        </div>
+
+        <!-- Simulation Impact Results -->
+        <div class="sim-results-panel">
+          <div id="sim-verdict-box" class="sim-verdict-banner warning">
+            <div style="font-size: 28px;">⚠️</div>
+            <div>
+              <h4 style="font-size: 1rem; font-weight: 800;" id="sim-verdict-title">Moderate Corridor Conflict Detected</h4>
+              <p style="font-size: 12px;" id="sim-verdict-desc">
+                Delaying Rajdhani by 25 mins shifts the optimal shadow window by 20 mins. 1 freight rake will require loop regulation at Khurja. Passenger punctuality remains 98.4%.
+              </p>
+            </div>
+          </div>
+
+          <h4 style="font-size: 13px; font-weight: 700; margin: 18px 0 8px 0;">Cascading Impact on Downstream Train Movements:</h4>
+          <table class="ripple-trains-table">
+            <thead>
+              <tr>
+                <th>Train No. / Name</th>
+                <th>Priority</th>
+                <th>Original ETA</th>
+                <th>Simulated ETA</th>
+                <th>Net Impact</th>
+                <th>Controller Action</th>
+              </tr>
+            </thead>
+            <tbody id="sim-table-body">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+
+          <div class="explainable-ai-box" style="margin-top: 20px;">
+            <strong>AI Mitigation Recommendation:</strong> Single-line bi-directional working is NOT needed. Regulate Freight BCN/4021A on Khurja Loop Line for 14 minutes to allow Vande Bharat and shifted Shadow Block execution without passenger impact.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: CONTROLLER & DRM APPROVAL FLOW -->
+    <section id="tab-approvals" class="tab-content">
+      <div style="margin-bottom: 20px;">
+        <h2 style="font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <span>🛡️</span> Controller & DRM Human-in-the-Loop Action Center
+        </h2>
+        <p style="font-size: 12px; color: var(--text-muted);">
+          Strict human oversight over AI recommendations. Section Controllers and Divisional Railway Managers review, customize, approve, or reject block demands with audit logging.
+        </p>
+      </div>
+
+      <div class="approvals-container">
+        <!-- Pending Block Warrants for Approval -->
+        <div class="panel-box">
+          <div class="panel-title-bar">
+            <h3><span>📑</span> Pending AI Block Warrants Awaiting Sanction</h3>
+            <span class="status-badge loop" id="pending-approval-count-badge">2 Pending Sanction</span>
+          </div>
+          <div id="warrants-approval-list" class="live-items-list" style="max-height: 600px;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Official Audit Trail Log -->
+        <div class="audit-log-box">
+          <div class="panel-title-bar">
+            <h3><span>📜</span> Operating Audit Trail</h3>
+            <span style="font-size: 11px; color: var(--text-faint);">Tamper-proof Log</span>
+          </div>
+          <div id="audit-log-list" style="max-height: 540px; overflow-y: auto;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: 26-WEEK ROLLING BLOCK PLAN -->
+    <section id="tab-rolling" class="tab-content">
+      <div style="margin-bottom: 20px;">
+        <h2 style="font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <span>📅</span> Indian Railways 26-Week Rolling Block Plan
+        </h2>
+        <p style="font-size: 12px; color: var(--text-muted);">
+          Macro strategic coordination per Railway Board guidelines. Fulfilling Civil, S&T, and TRD seasonal maintenance targets without degrading freight throughput or passenger punctuality.
+        </p>
+      </div>
+
+      <div class="rolling-plan-grid">
+        <div class="panel-box">
+          <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--tms-amber);">
+            🏗️ Civil / Track Engineering (TMS Quota)
+          </h4>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+            <span>Target: 220 Blocks</span>
+            <span style="font-weight: 700;">168 Completed (76%)</span>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 12px;">
+            <div style="background: var(--tms-amber); width: 76%; height: 100%;"></div>
+          </div>
+          <p style="font-size: 11px; color: var(--text-muted);">Focus: High-speed turnouts & ultrasonic flaw rails.</p>
+        </div>
+
+        <div class="panel-box">
+          <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--tdms-purple);">
+            ⚡ Traction Distribution / TRD (TDMS Quota)
+          </h4>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+            <span>Target: 160 Blocks</span>
+            <span style="font-weight: 700;">114 Completed (71%)</span>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 12px;">
+            <div style="background: var(--tdms-purple); width: 71%; height: 100%;"></div>
+          </div>
+          <p style="font-size: 11px; color: var(--text-muted);">Focus: 25kV OHE catenary re-tensioning & neutral sections.</p>
+        </div>
+
+        <div class="panel-box">
+          <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--smms-cyan);">
+            🟢 Signalling & Telecom (SMMS Quota)
+          </h4>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+            <span>Target: 140 Blocks</span>
+            <span style="font-weight: 700;">102 Completed (73%)</span>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 12px;">
+            <div style="background: var(--smms-cyan); width: 73%; height: 100%;"></div>
+          </div>
+          <p style="font-size: 11px; color: var(--text-muted);">Focus: Axle counter sensors & electronic interlocking.</p>
+        </div>
+      </div>
+
+      <!-- Gantt Timeline View -->
+      <div class="gantt-chart-mock">
+        <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 16px;">
+          Rolling Corridor Schedule (Weeks 16 to 22)
+        </h4>
+
+        <div class="gantt-week-axis">
+          <div style="width: 140px; font-size: 11px; color: var(--text-faint);">DEPARTMENT</div>
+          <div class="gantt-week-label">Week 16 (Executed)</div>
+          <div class="gantt-week-label">Week 17 (Executed)</div>
+          <div class="gantt-week-label" style="color: #38bdf8; font-weight: 800;">Week 18 (Current)</div>
+          <div class="gantt-week-label">Week 19 (Approved)</div>
+          <div class="gantt-week-label">Week 20 (Planned)</div>
+          <div class="gantt-week-label">Week 21 (Planned)</div>
+        </div>
+
+        <div class="gantt-row">
+          <div class="gantt-dept-title" style="color: var(--tms-amber);">TMS (Civil Track)</div>
+          <div class="gantt-bars-track">
+            <div class="gantt-bar-segment" style="left: 2%; width: 14%; background: #d97706;">W16 KRJ Track</div>
+            <div class="gantt-bar-segment" style="left: 18%; width: 14%; background: #d97706;">W17 GZB Yard</div>
+            <div class="gantt-bar-segment" style="left: 35%; width: 14%; background: #f59e0b; box-shadow: 0 0 10px #f59e0b;">W18 USFD Rail (Active)</div>
+            <div class="gantt-bar-segment" style="left: 52%; width: 14%; background: rgba(245, 158, 11, 0.4); border: 1px dashed #f59e0b;">W19 TDL Tamping</div>
+            <div class="gantt-bar-segment" style="left: 69%; width: 14%; background: rgba(245, 158, 11, 0.2);">W20 ETW Ballast</div>
+          </div>
+        </div>
+
+        <div class="gantt-row">
+          <div class="gantt-dept-title" style="color: var(--tdms-purple);">TDMS (TRD / OHE)</div>
+          <div class="gantt-bars-track">
+            <div class="gantt-bar-segment" style="left: 2%; width: 14%; background: #7c3aed;">W16 Mast Test</div>
+            <div class="gantt-bar-segment" style="left: 18%; width: 14%; background: #7c3aed;">W17 Catenary GZB</div>
+            <div class="gantt-bar-segment" style="left: 35%; width: 14%; background: #a855f7; box-shadow: 0 0 10px #a855f7;">W18 Catenary (Bundled)</div>
+            <div class="gantt-bar-segment" style="left: 52%; width: 14%; background: rgba(168, 85, 247, 0.4); border: 1px dashed #a855f7;">W19 Neutral Sec</div>
+          </div>
+        </div>
+
+        <div class="gantt-row">
+          <div class="gantt-dept-title" style="color: var(--smms-cyan);">SMMS (Signalling)</div>
+          <div class="gantt-bars-track">
+            <div class="gantt-bar-segment" style="left: 18%; width: 14%; background: #0891b2;">W17 Point 104</div>
+            <div class="gantt-bar-segment" style="left: 35%; width: 14%; background: #06b6d4; box-shadow: 0 0 10px #06b6d4;">W18 Axle Sensor</div>
+            <div class="gantt-bar-segment" style="left: 69%; width: 14%; background: rgba(6, 182, 212, 0.2);">W20 EI Upgrade</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: SUBMIT NEW MAINTENANCE DEMAND -->
+  <div class="modal-backdrop" id="modal-new-request">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">Submit Infrastructure Block Demand (BDMS)</h3>
+        <button id="btn-close-request-modal" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-new-request">
+          <div class="form-group">
+            <label for="req-dept">Requesting Department</label>
+            <select id="req-dept" class="form-select" required>
+              <option value="TMS">TMS - Civil Engineering (Track & Turnouts)</option>
+              <option value="TDMS">TDMS - Traction Distribution (TRD / 25kV OHE)</option>
+              <option value="SMMS">SMMS - Signalling & Telecom (Interlocking/Axle)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="req-work-type">Nature of Maintenance Activity</label>
+            <input type="text" id="req-work-type" class="form-input" placeholder="e.g. Ultrasonic Flaw Rail Replacement / OHE Wire Renewal" required>
+          </div>
+
+          <div class="form-group">
+            <label for="req-section">Corridor Section & KM Markers</label>
+            <select id="req-section" class="form-select">
+              <option value="KRJ-ALJN">Khurja - Aligarh Section (KM 83 - 126)</option>
+              <option value="GZB-KRJ">Ghaziabad - Khurja Section (KM 25 - 83)</option>
+              <option value="ALJN-TDL">Aligarh - Tundla Section (KM 126 - 204)</option>
+              <option value="TDL-ETW">Tundla - Etawah Section (KM 204 - 296)</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label for="req-track">Track Affected</label>
+              <select id="req-track" class="form-select">
+                <option value="DN_MAIN">Down Main Line</option>
+                <option value="UP_MAIN">Up Main Line</option>
+                <option value="LOOP">Station Loop Line</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="req-duration">Required Duration (Minutes)</label>
+              <input type="number" id="req-duration" class="form-input" min="30" max="360" value="120" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="req-urgency">Urgency / Safety Criticality</label>
+            <select id="req-urgency" class="form-select">
+              <option value="CRITICAL">Critical / IMR Defect (Safety Risk)</option>
+              <option value="HIGH">High Priority (Rolling Plan Scheduled)</option>
+              <option value="MEDIUM">Medium Priority (Preventive)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="req-justification">Defect Justification & Equipment Gang Strength</label>
+            <textarea id="req-justification" class="form-textarea" rows="3" placeholder="Provide defect detection details, machine IDs, and safety measures..." required></textarea>
+          </div>
+
+          <div class="modal-footer" style="padding-right: 0; padding-left: 0;">
+            <button type="button" id="btn-cancel-request" class="btn-outline">Cancel</button>
+            <button type="submit" class="btn-primary">Submit to RAILNEX AI</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONTROLLER SANCTION REVIEW -->
+  <div class="modal-backdrop" id="modal-approval-decision">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 style="font-size: 1.1rem; font-weight: 700;" id="approval-modal-title">Sanction Block Warrant</h3>
+        <button id="btn-close-approval-modal" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" id="approval-modal-body">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div class="modal-footer">
+        <button id="btn-modal-reject" class="btn-danger">Reject with Remarks</button>
+        <button id="btn-modal-modify" class="btn-outline">Modify Time Window</button>
+        <button id="btn-modal-approve" class="btn-success">Approve & Dispatch to COA</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GEMINI AI COPILOT -->
+  <div class="modal-backdrop" id="modal-gemini-copilot">
+    <div class="modal-dialog" style="max-width: 680px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, rgba(67, 56, 202, 0.4), rgba(126, 34, 206, 0.4));">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="font-size: 24px;">✨</div>
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff;">RAILNEX Gemini AI Operations Copilot</h3>
+            <div style="font-size: 11px; color: #d8b4fe;">Google Gemini 1.5 Flash • Indian Railways Operational Intelligence</div>
+          </div>
+        </div>
+        <button id="btn-close-gemini-modal" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+          Ask Gemini operational questions regarding block scheduling, multi-department co-allocation, safety clearances, and caution orders:
+        </div>
+
+        <div class="gemini-quick-prompts">
+          <button class="quick-prompt-chip" data-prompt="Explain why co-allocating TMS rail defect with TDMS catenary tensioning at KM 95 is optimal.">
+            💡 Why bundle TMS + TDMS at KM 95?
+          </button>
+          <button class="quick-prompt-chip" data-prompt="What caution orders and speed restrictions must be issued for Vande Bharat 22436 during adjacent line track tamping?">
+            🚆 Caution Orders for Vande Bharat
+          </button>
+          <button class="quick-prompt-chip" data-prompt="How does this block plan comply with the Railway Board 26-Week Rolling Block Plan quota?">
+            📅 Rolling Block Plan Compliance
+          </button>
+        </div>
+
+        <div class="form-group" style="margin-top: 14px;">
+          <textarea id="gemini-input-prompt" class="form-textarea" rows="3" placeholder="Enter your operational query for Gemini AI..."></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <span style="font-size: 11px; color: #a855f7;">⚡ Connected to Gemini API</span>
+          <button id="btn-submit-gemini-query" class="btn-gemini">
+            <span>✨</span> Query Gemini AI
+          </button>
+        </div>
+
+        <div id="gemini-loading-indicator" style="display: none; text-align: center; padding: 20px; color: #c084fc;">
+          <div style="font-size: 24px; animation: pulse-dot 1s infinite;">✨</div>
+          <div style="font-size: 12px; margin-top: 6px;">Consulting Gemini AI Operations Engine...</div>
+        </div>
+
+        <div id="gemini-response-container" class="gemini-response-box" style="display: none;">
+          <div id="gemini-response-text"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Application Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

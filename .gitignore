@@ -1,0 +1,16 @@
+# Environment variables (sensitive API keys)
+.env
+.env.local
+env.local
+
+# Operating System files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs
+*.log
+
+# Editor / IDE settings
+.vscode/
+.idea/
